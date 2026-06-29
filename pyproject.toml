@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phi-evolver"
+version = "0.1.0"
+description = "Computing evolution of phi"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+  { name = "Toshiya Namikawa", email = "toshiya.namikawa@ipmu.jp" },
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+  "numpy",
+  "scipy",
+  "astropy",
+]

@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: phi-evolver
+Version: 0.1.0
+Summary: Computing evolution of phi
+Author-email: Toshiya Namikawa <toshiya.namikawa@ipmu.jp>
+License-Expression: MIT
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: astropy
