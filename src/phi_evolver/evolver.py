@@ -15,7 +15,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
                       h=0.6766, omega_b=0.02242, omega_cdm=0.11933, Omega_k=0., T_cmb=2.7255,
-                      dir_output=None,
+                      dir_output=None, normalized=True,
                      ):
     '''
     Main function to compute phi(a)
@@ -31,11 +31,18 @@ def compute_evolution(dir_evolver, dir_birefclass,
                       )
 
     # solution
-    phi = solve_ivp(EoM_phi, [a[0],1], [phi0_ini,phi1_ini], 
+    x_a = solve_ivp(EoM_phi, [a[0],1], [phi0_ini,phi1_ini], 
                     t_eval=a, args = [mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
                    )
 
-    return a, phi.y[0], Ha, dHada
+    phi  = x_a.y[0]
+    phi0 = phi[-1]
+
+    # compute (phi(0)-phi(z))/(phi(0)-1) = beta(z)/beta_0
+    if normalized:
+        phi = (phi-phi0)/(1.-phi0)
+    
+    return a, phi, Ha, dHada
 
 
 
