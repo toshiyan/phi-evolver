@@ -14,8 +14,8 @@ eV2Mpc = (1*u.eV/(c.hbar*c.c)).to(1/u.Mpc).value
 def compute_evolution(dir_evolver, dir_birefclass, 
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
-                      h=0.6766, omega_b=0.02242, omega_cdm=0.11933, Omega_k=0., T_cmb=2.7255,
-                      dir_output=None, normalized=True,
+                      dir_output=None, normalized=True, N_a=10000,
+                      **kwargs
                      ):
     '''
     Main function to compute phi(a)
@@ -24,15 +24,13 @@ def compute_evolution(dir_evolver, dir_birefclass,
     # mass
     mass = 10**(logm)*eV2Mpc
 
-    # compute background quantities and load a, H(a), dH(a)/da
-    a, Ha, dHada = compute_background(dir_evolver,dir_birefclass,
-                       h=h,omega_b=omega_b,omega_cdm=omega_cdm,Omega_k=Omega_k,T_cmb=T_cmb,
-                       dir_output=dir_output,
-                      )
+    # compute background quantities and load H(a), dH(a)/da
+    Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, **kwargs,)
 
     # solution
+    a = np.arange(1, N_a + 1) / N_a
     x_a = solve_ivp(EoM_phi, [a[0],1], [phi0_ini,phi1_ini], 
-                    t_eval=a, args = [mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
+                    t_eval=a, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
                    )
 
     phi  = x_a.y[0]
@@ -47,8 +45,8 @@ def compute_evolution(dir_evolver, dir_birefclass,
 
 
 def compute_background(dir_evolver,dir_birefclass,
-                       h=0.6766, omega_b=0.02242, omega_cdm=0.11933, Omega_k=0., T_cmb=2.7255,
-                       dir_output=None,
+                       dir_output=None, 
+                       **kwargs,
                       ):
 
     dir_class_aux = dir_evolver + 'class_aux/'
@@ -63,22 +61,21 @@ def compute_background(dir_evolver,dir_birefclass,
     file_class_message = dir_class_output + 'test.log'
 
     # create inifile for CLASS
-    edit_inifile(file_class_ini_org, file_class_ini_new, dir_class_output, 
-                 h=h, omega_b=omega_b, omega_cdm=omega_cdm,
-                )
+    edit_inifile(file_class_ini_org, file_class_ini_new, dir_class_output, **kwargs)
 
     # run CLASS
     os.system(dir_birefclass+'/class '+file_class_ini_new+' > '+file_class_message)
 
     # load a, H(a), dH(a)/da
-    a, Ha, dHada = load_background(dir_class_output+'/background.dat')
+    Ha, dHada = load_background(dir_class_output+'/background.dat')
 
-    return a, Ha, dHada
+    return Ha, dHada
     
 
 
 def edit_inifile(inifile_org, inifile_new, output_data_path,
-                h=0.6766, omega_b=0.02242, omega_cdm=0.11933, Omega_k=0., T_cmb=2.7255):
+                h=0.6766, omega_b=0.02242, omega_cdm=0.11933, Omega_k=0., T_cmb=2.7255,
+                ):
     '''
     Edit CLASS inifile to compute background quantities
     '''
@@ -117,7 +114,27 @@ def load_background(filename):
 
     # load pre-computed background
     df_bg = pd.read_table(filename,comment='#',header=None,sep=r'\s+')
-    df_bg = df_bg.rename(columns={0: 'z', 1:'proper time [Gyr]', 2:'conf.time [Mpc]',  3:'H [1/Mpc]',4:'comov.dist.', 5:'ang.diam.dist.', 6:'lum.dist.', 7:'comov.snd.hrz.', 8:'rho_g', 9:'rho_b', 10:'rho_cdm', 11:'rho_lambda', 12:'rho_ur', 13:'rho_crit', 14:'rho_tot', 15:'p_tot', 16:'p_tot_prime', 17:'gr.fac. D', 18:'gr.fac. f'})
+    df_bg = df_bg.rename(
+        columns={0: 'z', 
+                 1:'proper time [Gyr]', 
+                 2:'conf.time [Mpc]',  
+                 3:'H [1/Mpc]',
+                 4:'comov.dist.', 
+                 5:'ang.diam.dist.', 
+                 6:'lum.dist.', 
+                 7:'comov.snd.hrz.', 
+                 8:'rho_g', 
+                 9:'rho_b', 
+                 10:'rho_cdm', 
+                 11:'rho_lambda', 
+                 12:'rho_ur', 
+                 13:'rho_crit', 
+                 14:'rho_tot', 
+                 15:'p_tot', 
+                 16:'p_tot_prime', 
+                 17:'gr.fac. D', 
+                 18:'gr.fac. f'}
+    )
 
     # scale factor
     a = df_bg['comov.dist.']/df_bg['lum.dist.']
@@ -129,7 +146,7 @@ def load_background(filename):
     # dH(a)/da
     dHada = Ha.derivative()
 
-    return a, Ha, dHada
+    return Ha, dHada
     
 
 # phi parameters
