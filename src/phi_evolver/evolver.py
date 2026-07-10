@@ -33,7 +33,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
     #a_ini = a_eta(eta0/N_a)
     #a_eval = np.arange(1, N_a + 1) / N_a
     a_eval = np.logspace(np.log10(a_ini),0,N_a)
-    x_a = solve_ivp(EoM_phi, [a[0],1], [phi0_ini,phi1_ini], 
+    x_a = solve_ivp(EoM_phi, [a_eval[0],1], [phi0_ini,phi1_ini], 
                     t_eval=a_eval, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
                    )
 
