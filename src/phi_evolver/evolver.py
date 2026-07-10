@@ -14,7 +14,7 @@ eV2Mpc = (1*u.eV/(c.hbar*c.c)).to(1/u.Mpc).value
 def compute_evolution(dir_evolver, dir_birefclass, 
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
-                      dir_output=None, normalized=True, N_a=10000, 
+                      dir_output=None, normalized=True, N_a=10000, a_ini=None, 
                       **kwargs
                      ):
     '''
@@ -28,9 +28,10 @@ def compute_evolution(dir_evolver, dir_birefclass,
     a, eta, Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, **kwargs,)
 
     # solution
-    eta0  = eta[-1]
-    a_eta = CubicSpline( eta, a )
-    a_ini = a_eta(eta0/N_a)
+    if a_ini is None,
+        eta0  = eta[-1]
+        a_eta = CubicSpline( eta, a )
+        a_ini = a_eta(eta0/N_a)
     #a_eval = np.arange(1, N_a + 1) / N_a
     a_eval = np.logspace(np.log10(a_ini),0,N_a)
     x_a = solve_ivp(EoM_phi, [a_eval[0],1], [phi0_ini,phi1_ini], 
