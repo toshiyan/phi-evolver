@@ -15,6 +15,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
                       dir_output=None, normalized=True, N_a=10000, a_ini=None, 
+                      method="DOP853",rtol=1e-10, atol=1e-12, max_step=0.01, 
                       **kwargs
                      ):
     '''
@@ -35,7 +36,8 @@ def compute_evolution(dir_evolver, dir_birefclass,
     #a_eval = np.arange(1, N_a + 1) / N_a
     a_eval = np.logspace(np.log10(a_ini),0,N_a)
     x_a = solve_ivp(EoM_phi, [a_eval[0],1], [phi0_ini,phi1_ini], 
-                    t_eval=a_eval, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
+                    t_eval=a_eval, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end], 
+                    method=method,rtol=rtol, atol=atol, max_step=max_step
                    )
 
     phi  = x_a.y[0]
