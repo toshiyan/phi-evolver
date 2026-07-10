@@ -25,12 +25,16 @@ def compute_evolution(dir_evolver, dir_birefclass,
     mass = 10**(logm)*eV2Mpc
 
     # compute background quantities and load H(a), dH(a)/da
-    Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, **kwargs,)
+    a, eta, Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, **kwargs,)
 
     # solution
-    a = np.arange(1, N_a + 1) / N_a
+    eta0  = eta[-1]
+    a_eta = CubicSpline( eta, a )
+    a_ini = a_eta(eta0/N_a)
+    #a_eval = np.arange(1, N_a + 1) / N_a
+    a_eval = np.logspace(np.log10(a_ini),0,N_a)
     x_a = solve_ivp(EoM_phi, [a[0],1], [phi0_ini,phi1_ini], 
-                    t_eval=a, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
+                    t_eval=a_eval, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end]
                    )
 
     phi  = x_a.y[0]
@@ -40,7 +44,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
     if normalized:
         phi = (phi-phi0)/(1.-phi0)
     
-    return a, phi, Ha, dHada
+    return a_eval, phi, Ha, dHada
 
 
 
@@ -66,10 +70,10 @@ def compute_background(dir_evolver,dir_birefclass,
     # run CLASS
     os.system(dir_birefclass+'/class '+file_class_ini_new+' > '+file_class_message)
 
-    # load a, H(a), dH(a)/da
-    Ha, dHada = load_background(dir_class_output+'background.dat')
+    # load a, eta, H(a), dH(a)/da
+    a, eta, Ha, dHada = load_background(dir_class_output+'background.dat')
 
-    return Ha, dHada
+    return a, eta, Ha, dHada
     
 
 
@@ -140,13 +144,16 @@ def load_background(filename):
     a = df_bg['comov.dist.']/df_bg['lum.dist.']
     a = a.fillna(1.0)
 
+    # conformal time
+    eta = df_bg['conf.time [Mpc]']
+
     # H(a)
     Ha = CubicSpline( a, df_bg['H [1/Mpc]'])
 
     # dH(a)/da
     dHada = Ha.derivative()
 
-    return Ha, dHada
+    return a, eta, Ha, dHada
     
 
 # phi parameters
