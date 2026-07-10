@@ -29,7 +29,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
     a, eta, Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, **kwargs,)
 
     # solution
-    if a_ini is None,
+    if a_ini is None:
         eta0  = eta[-1]
         a_eta = CubicSpline( eta, a )
         a_ini = a_eta(eta0/N_a)
@@ -37,7 +37,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
     a_eval = np.logspace(np.log10(a_ini),0,N_a)
     x_a = solve_ivp(EoM_phi, [a_eval[0],1], [phi0_ini,phi1_ini], 
                     t_eval=a_eval, args=[mass, tf, n, Ha, dHada, xi, eps, z_start, z_end], 
-                    method=method,rtol=rtol, atol=atol, max_step=max_step
+                    method=method, rtol=rtol, atol=atol, max_step=max_step
                    )
 
     phi  = x_a.y[0]
