@@ -3,7 +3,7 @@
 `phi-evolver` is a Python package for computing evolution of phi by solving the following equation:
 
 $$
-\phi'' + 2{\cal H}\phi' + a^2V_{,\phi} = 0
+\phi'' + 2{\cal H}\phi' + a^2V_{,\phi} = S
 $$
 
 # Installation
