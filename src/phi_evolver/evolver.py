@@ -14,7 +14,7 @@ eV2Mpc = (1*u.eV/(c.hbar*c.c)).to(1/u.Mpc).value
 def compute_evolution(dir_evolver, dir_birefclass, 
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
-                      dir_output=None, normalized=True, N_a=10000, a_ini=1e-5
+                      dir_output=None, normalized=True, N_a=10000, a_ini=1e-5, 
                       **kwargs
                      ):
     '''
