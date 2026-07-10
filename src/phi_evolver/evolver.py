@@ -67,7 +67,7 @@ def compute_background(dir_evolver,dir_birefclass,
     os.system(dir_birefclass+'/class '+file_class_ini_new+' > '+file_class_message)
 
     # load a, H(a), dH(a)/da
-    Ha, dHada = load_background(dir_class_output+'/background.dat')
+    Ha, dHada = load_background(dir_class_output+'background.dat')
 
     return Ha, dHada
     
