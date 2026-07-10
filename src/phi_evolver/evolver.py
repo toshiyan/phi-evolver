@@ -203,9 +203,9 @@ def EoM_phi(a, x, mass, tf, n, Ha, dHada, xi=None, eps=1e-3, z_start=60,z_end=50
     
     if xi is not None and z>z_end and z<z_start:
         frac = 1e-3  # rho_m0/rho_phi_ini, i.e. energy density fraction of ALP to matter
-        V_ini = V_phi(x[0], mass, tf, n, deriv=0)
-        Q    = (xi/a) * (V_ini / frac / a**3) # energy injection rate to the ALP field
-        #Q    = (xi/a) * (0.5*mass**2/frac/a**3)
+        #V_ini = V_phi(x[0], mass, tf, n, deriv=0)
+        #Q    = (xi/a) * (V_ini / frac / a**3) # energy injection rate to the ALP field
+        Q    = (xi/a) * (0.5*mass**2/frac/a**3)
         Src  = Q * x[1] / (x[1]**2 + eps**2)  # regularized Q/(dvarphi/da)
     else:
         Src = 0.
