@@ -16,7 +16,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
                       phi0_ini = 1, phi1_ini = 0,
                       dir_output=None, normalized=True, N_a=10000, a_ini=None, 
                       class_force_run=False,
-                      method="DOP853", rtol=1e-5, atol=1e-6, max_step=0.01, 
+                      method="DOP853", rtol=1e-5, atol=1e-6, max_step=np.inf, 
                       **kwargs
                      ):
     '''
