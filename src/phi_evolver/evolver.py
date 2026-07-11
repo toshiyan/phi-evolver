@@ -15,6 +15,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
                       dir_output=None, normalized=True, N_a=10000, a_ini=None, 
+                      class_force_run=False
                       method="DOP853", rtol=1e-5, atol=1e-6, max_step=0.01, 
                       **kwargs
                      ):
@@ -26,7 +27,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
     mass = 10**(logm)*eV2Mpc
 
     # compute background quantities and load H(a), dH(a)/da
-    a, eta, Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, **kwargs,)
+    a, eta, Ha, dHada = compute_background(dir_evolver, dir_birefclass, dir_output=dir_output, class_force_run=class_force_run, **kwargs,)
 
     # solution
     if a_ini is None:
@@ -51,7 +52,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
 
 
 
-def compute_background(dir_evolver, dir_birefclass, dir_output=None, **kwargs,):
+def compute_background(dir_evolver, dir_birefclass, dir_output=None, class_force_run=False, **kwargs,):
 
     dir_class_aux = dir_evolver + 'class_aux/'
 
@@ -65,7 +66,7 @@ def compute_background(dir_evolver, dir_birefclass, dir_output=None, **kwargs,):
     file_class_message   = dir_class_output + 'test.log'
     file_background_data = dir_class_output + 'background.dat'
 
-    if not os.path.exists(file_background_data):
+    if class_force_run or not os.path.exists(file_background_data):
         
         # create inifile for CLASS
         edit_inifile(file_class_ini_org, file_class_ini_new, dir_class_output, **kwargs)
