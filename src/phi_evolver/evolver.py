@@ -65,7 +65,7 @@ def compute_background(dir_evolver, dir_birefclass, dir_output=None, **kwargs,):
     file_class_message   = dir_class_output + 'test.log'
     file_background_data = dir_class_output + 'background.dat'
 
-    if os.path.exists(file_background_data):
+    if not os.path.exists(file_background_data):
         
         # create inifile for CLASS
         edit_inifile(file_class_ini_org, file_class_ini_new, dir_class_output, **kwargs)
