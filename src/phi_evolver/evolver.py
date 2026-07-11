@@ -15,7 +15,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
                       logm, n=1, tf=100, xi=None, eps=1e-3, z_start=60,z_end=50, 
                       phi0_ini = 1, phi1_ini = 0,
                       dir_output=None, normalized=True, N_a=10000, a_ini=None, 
-                      method="DOP853", rtol=1e-10, atol=1e-12, max_step=0.01, 
+                      method="DOP853", rtol=1e-5, atol=1e-6, max_step=0.01, 
                       **kwargs
                      ):
     '''
@@ -51,10 +51,7 @@ def compute_evolution(dir_evolver, dir_birefclass,
 
 
 
-def compute_background(dir_evolver,dir_birefclass,
-                       dir_output=None, 
-                       **kwargs,
-                      ):
+def compute_background(dir_evolver, dir_birefclass, dir_output=None, **kwargs,):
 
     dir_class_aux = dir_evolver + 'class_aux/'
 
@@ -63,18 +60,21 @@ def compute_background(dir_evolver,dir_birefclass,
     else:
         dir_class_output = dir_output
     
-    file_class_ini_org = dir_class_aux + 'background.ini'
-    file_class_ini_new = dir_class_output + 'background.ini'
-    file_class_message = dir_class_output + 'test.log'
+    file_class_ini_org   = dir_class_aux + 'background.ini'
+    file_class_ini_new   = dir_class_output + 'background.ini'
+    file_class_message   = dir_class_output + 'test.log'
+    file_background_data = dir_class_output + 'background.dat'
 
-    # create inifile for CLASS
-    edit_inifile(file_class_ini_org, file_class_ini_new, dir_class_output, **kwargs)
+    if force or not os.path.exists(file_background_data):
+        
+        # create inifile for CLASS
+        edit_inifile(file_class_ini_org, file_class_ini_new, dir_class_output, **kwargs)
 
-    # run CLASS
-    os.system(dir_birefclass+'/class '+file_class_ini_new+' > '+file_class_message)
+        # run CLASS
+        os.system(dir_birefclass+'/class '+file_class_ini_new+' > '+file_class_message)
 
     # load a, eta, H(a), dH(a)/da
-    a, eta, Ha, dHada = load_background(dir_class_output+'background.dat')
+    a, eta, Ha, dHada = load_background(file_background_data)
 
     return a, eta, Ha, dHada
     
